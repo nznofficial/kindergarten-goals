@@ -176,16 +176,9 @@ export const pictureWords: PictureWord[] = [
   // -- extra rhyme partners --
   { id: 'shell', word: 'shell', initial: null, final: 'l', rime: 'ell', category: 'nature', cvc: false },
   { id: 'sled', word: 'sled', initial: null, final: 'd', rime: 'ed', category: 'toy', cvc: false },
-  { id: 'red', word: 'red', initial: 'r', final: 'd', rime: 'ed', category: 'nature', cvc: true },
   { id: 'mail', word: 'mail', initial: 'm', final: 'l', rime: 'ail', category: 'home', cvc: false },
   { id: 'snail', word: 'snail', initial: null, final: 'l', rime: 'ail', category: 'animal', cvc: false },
   { id: 'lake', word: 'lake', initial: 'l', final: 'k', rime: 'ake', category: 'nature', cvc: false },
-  { id: 'hop', word: 'hop', initial: 'h', final: 'p', rime: 'op', category: 'nature', cvc: true },
-  { id: 'pop', word: 'pop', initial: 'p', final: 'p', rime: 'op', category: 'food', cvc: true },
-  { id: 'zip', word: 'zip', initial: 'z', final: 'p', rime: 'ip', category: 'clothing', cvc: true },
-  { id: 'tip', word: 'tip', initial: 't', final: 'p', rime: 'ip', category: 'nature', cvc: true },
-  { id: 'run', word: 'run', initial: 'r', final: 'n', rime: 'un', category: 'nature', cvc: true },
-  { id: 'cut', word: 'cut', initial: 'c', final: 't', rime: 'ut', category: 'home', cvc: true },
   { id: 'boat', word: 'boat', initial: 'b', final: 't', rime: null, category: 'vehicle', cvc: false },
   { id: 'jeep', word: 'jeep', initial: 'j', final: 'p', rime: null, category: 'vehicle', cvc: false },
   { id: 'mitten', word: 'mitten', initial: 'm', final: 'n', rime: null, category: 'clothing', cvc: false },
@@ -194,6 +187,11 @@ export const pictureWords: PictureWord[] = [
   { id: 'blocks', word: 'blocks', initial: null, final: null, rime: null, category: 'toy', cvc: false },
   { id: 'cookie', word: 'cookie', initial: 'c', final: null, rime: null, category: 'food', cvc: false },
   { id: 'flower', word: 'flower', initial: null, final: null, rime: null, category: 'nature', cvc: false },
+  // Nouns standing in for verbs and adjectives that could not be illustrated.
+  { id: 'shed', word: 'shed', initial: null, final: 'd', rime: 'ed', category: 'home', cvc: false },
+  { id: 'stop', word: 'stop', initial: null, final: 'p', rime: 'op', category: 'home', cvc: false },
+  { id: 'ship', word: 'ship', initial: null, final: 'p', rime: 'ip', category: 'vehicle', cvc: false },
+  { id: 'chip', word: 'chip', initial: null, final: 'p', rime: 'ip', category: 'food', cvc: false },
 ]
 
 export const byId = new Map(pictureWords.map((w) => [w.id, w]))

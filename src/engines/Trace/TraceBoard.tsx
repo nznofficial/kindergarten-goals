@@ -198,13 +198,17 @@ export function TraceBoard({ text, onComplete, onStray, demo }: Props) {
               className={`trace-guide ${active ? 'trace-guide-active' : ''}`}
               d={d}
             />
-            <path
-              className="trace-ink"
-              d={d}
-              pathLength={1}
-              strokeDasharray={1}
-              strokeDashoffset={1 - Math.min(1, ratio)}
-            />
+            {/* Omitted entirely at zero progress: a round line-cap on an
+                empty dash still paints a dot at the end of the stroke. */}
+            {ratio > 0 ? (
+              <path
+                className="trace-ink"
+                d={d}
+                pathLength={1}
+                strokeDasharray={1}
+                strokeDashoffset={1 - Math.min(1, ratio)}
+              />
+            ) : null}
           </g>
         )
       })}

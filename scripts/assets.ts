@@ -93,6 +93,12 @@ const GOAL_SCENES: Record<string, string> = {
 //              acorns is worse than not having the word at all.
 //   up       - not a picturable object; generated an owl.
 //   fin      - indistinguishable from the existing "fish" illustration.
+//   red, hop, run, cut, pop, tip, zip
+//            - verbs and adjectives, which an image model has no way to draw.
+//              Asked for "a single red" it drew the reference fox; "run" became
+//              a rabbit, "cut" a cat, "zip" a duplicate of the zipper. Replaced
+//              with shed / stop / ship / chip, which keep the -ed, -op and -ip
+//              rhyme families alive and are actually picturable.
 const WORD_SUBJECT: Record<string, string> = {
   milk: 'a tall clear drinking glass full of white milk. No carton, no label, absolutely no writing anywhere in the image.',
   ten: 'exactly ten acorns arranged in two neat rows of five. Do not draw a numeral.',
@@ -105,6 +111,10 @@ const WORD_SUBJECT: Record<string, string> = {
   tail: 'a fluffy orange fox tail with a white tip, on its own.',
   wig: 'a curly wig on a plain wooden wig stand.',
   ax: 'an axe with a wooden handle and a grey metal head.',
+  shed: 'a small wooden garden shed with a pitched roof and one window.',
+  stop: 'a red octagonal stop sign on a short post. No writing on the sign.',
+  ship: 'a cargo ship on the sea, side view, with a tall funnel.',
+  chip: 'a single golden potato chip crisp.',
 }
 
 const defaultSubject = (word: string) =>
