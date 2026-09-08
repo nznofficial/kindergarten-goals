@@ -57,32 +57,74 @@ function decode(result: { data?: { b64_json?: string }[] } | undefined): Buffer 
   return Buffer.from(b64, 'base64')
 }
 
+/**
+ * Every edit call uploads the anchor, and the account is capped at five input
+ * images per minute. Concurrency alone cannot beat that, so requests are paced
+ * through a rolling-window gate; the workers exist to overlap the ~30s the
+ * model spends drawing, not to send more per minute.
+ */
+const RPM = 5
+const sent: number[] = []
+
+async function takeSlot(): Promise<void> {
+  for (;;) {
+    const now = Date.now()
+    while (sent.length && now - sent[0] > 60_000) sent.shift()
+    if (sent.length < RPM) {
+      sent.push(now)
+      return
+    }
+    await new Promise((r) => setTimeout(r, 60_000 - (now - sent[0]) + 250))
+  }
+}
+
+/** Retries a 429 for as long as the server keeps telling us to wait. */
+async function withRetry<T>(label: string, fn: () => Promise<T>, tries = 6): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await takeSlot()
+      return await fn()
+    } catch (err) {
+      const message = (err as Error).message ?? ''
+      const rateLimited = message.includes('429') || message.includes('Rate limit')
+      if (!rateLimited || attempt >= tries) throw err
+      const suggested = Number(message.match(/try again in (\d+)/)?.[1] ?? 0)
+      const waitMs = Math.max(suggested * 1000, 5_000) * attempt
+      console.log(`  waiting ${Math.round(waitMs / 1000)}s after rate limit on ${label}`)
+      await new Promise((r) => setTimeout(r, waitMs))
+    }
+  }
+}
+
 async function generate(asset: ImageAsset, anchor: string | null): Promise<Buffer> {
   // Everything after the anchor is generated as an edit against it, which is
   // what keeps 150 separate calls looking like one illustrator drew them.
   if (anchor && existsSync(anchor)) {
     // toFile attaches a filename and mimetype; a bare stream is rejected as
     // application/octet-stream.
-    const reference = await toFile(createReadStream(anchor), 'anchor.png', { type: 'image/png' })
-    const result = await client.images.edit({
-      model: 'gpt-image-1',
-      image: [reference],
-      prompt: `${asset.prompt}\n\nMatch the art style, line weight, shading and finish of the reference image exactly. Draw the described subject only - do not copy the reference subject. Use the subject's own natural real-world colors; do not tint it toward the reference image's orange palette.`,
-      size: '1024x1024',
-      quality: 'medium',
-      background: 'transparent',
-    })
+    const result = await withRetry(asset.key, async () =>
+      client.images.edit({
+        model: 'gpt-image-1',
+        image: [await toFile(createReadStream(anchor), 'anchor.png', { type: 'image/png' })],
+        prompt: `${asset.prompt}\n\nMatch the art style, line weight, shading and finish of the reference image exactly. Draw the described subject only - do not copy the reference subject. Use the subject's own natural real-world colors; do not tint it toward the reference image's orange palette.`,
+        size: '1024x1024',
+        quality: 'medium',
+        background: 'transparent',
+      }),
+    )
     return decode(result as never)
   }
 
-  const result = await client.images.generate({
-    model: 'gpt-image-1',
-    prompt: asset.prompt,
-    size: '1024x1024',
-    quality: 'medium',
-    background: 'transparent',
-    output_format: 'png',
-  })
+  const result = await withRetry(asset.key, async () =>
+    client.images.generate({
+      model: 'gpt-image-1',
+      prompt: asset.prompt,
+      size: '1024x1024',
+      quality: 'medium',
+      background: 'transparent',
+      output_format: 'png',
+    }),
+  )
   return decode(result as never)
 }
 
@@ -111,8 +153,8 @@ async function main() {
 
   let done = 0
   let failed = 0
-  // Latency-bound: each call takes ~30s, so width is what makes the run finish.
-  const workers = Array.from({ length: 10 }, async () => {
+  // Five workers to overlap the draw time; the gate above sets the actual pace.
+  const workers = Array.from({ length: 5 }, async () => {
     for (;;) {
       const asset = queue.shift()
       if (!asset) return

@@ -63,8 +63,10 @@ const GOAL_SCENES: Record<string, string> = {
   capitals: 'three big wooden alphabet blocks stacked, blank faces, no letters drawn on them',
   lowercase: 'a handful of small smooth pebbles arranged in a row on grass',
   'letter-sounds': 'Hoot the owl with one wing cupped behind an ear, listening',
-  'first-sounds': 'a bright red arrow pointing at the left end of a row of three pebbles',
-  'last-sounds': 'a bright red arrow pointing at the right end of a row of three pebbles',
+  'first-sounds':
+    'three round grey pebbles in a row on grass; only the leftmost pebble is bright yellow and glowing with a warm halo',
+  'last-sounds':
+    'three round grey pebbles in a row on grass; only the rightmost pebble is bright yellow and glowing with a warm halo',
   'recognize-rhymes': 'two matching bells side by side, ringing together with sound waves',
   'produce-rhyme': 'Clover the rabbit singing happily with musical notes floating up',
   'sight-words': 'an open storybook with blank pages, glowing softly',
@@ -80,6 +82,34 @@ const GOAL_SCENES: Record<string, string> = {
   'subtract-within-5': 'a pile of acorns with a few rolling away to the side',
   'write-numbers': 'Bramble the bear holding a big crayon over a blank sheet of paper',
 }
+
+/**
+ * Subjects whose plain name generates something ambiguous, wrong, or with text
+ * baked into it. Each of these replaced a generation that failed review.
+ */
+// Deliberately absent from objects.ts, each after a failed generation review:
+//   six, ten - came back as numerals or the wrong count, and this app also
+//              teaches counting, so a picture labelled "ten" showing twelve
+//              acorns is worse than not having the word at all.
+//   up       - not a picturable object; generated an owl.
+//   fin      - indistinguishable from the existing "fish" illustration.
+const WORD_SUBJECT: Record<string, string> = {
+  milk: 'a tall clear drinking glass full of white milk. No carton, no label, absolutely no writing anywhere in the image.',
+  ten: 'exactly ten acorns arranged in two neat rows of five. Do not draw a numeral.',
+  dot: 'one single round bright red painted dot in the middle of a plain white square of paper.',
+  gum: 'a stick of chewing gum, half slid out of its opened paper wrapper. No writing on the wrapper.',
+  fin: 'a blue fish seen from the side with one large triangular dorsal fin clearly raised on its back.',
+  leg: 'a whole human leg from hip to foot, side view, wearing a short sock.',
+  map: 'a folded paper treasure map with a winding dotted trail and a red X. No readable writing.',
+  bag: 'a brown paper grocery bag, open at the top, standing upright.',
+  tail: 'a fluffy orange fox tail with a white tip, on its own.',
+  wig: 'a curly wig on a plain wooden wig stand.',
+  ax: 'an axe with a wooden handle and a grey metal head.',
+}
+
+const defaultSubject = (word: string) =>
+  `a single ${word}, the most typical and instantly recognizable version a ` +
+  `five-year-old would draw. One object only, no scene around it.`
 
 export const anchorKey = 'mascot/idle'
 
@@ -113,9 +143,7 @@ export function imageAssets(): ImageAsset[] {
   for (const word of pictureWords) {
     out.push({
       key: `words/${word.id}`,
-      prompt:
-        `${STYLE} Subject: a single ${word.word}, the most typical and instantly ` +
-        `recognizable version a five-year-old would draw. One object only, no scene around it.`,
+      prompt: `${STYLE} Subject: ${WORD_SUBJECT[word.id] ?? defaultSubject(word.word)}`,
     })
   }
 

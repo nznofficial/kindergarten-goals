@@ -65,7 +65,6 @@ export const pictureWords: PictureWord[] = [
   { id: 'fan', word: 'fan', initial: 'f', final: 'n', rime: 'an', category: 'home', cvc: true },
   { id: 'fox', word: 'fox', initial: 'f', final: 'x', rime: 'ox', category: 'animal', cvc: true },
   { id: 'fig', word: 'fig', initial: 'f', final: 'g', rime: 'ig', category: 'food', cvc: true },
-  { id: 'fin', word: 'fin', initial: 'f', final: 'n', rime: 'in', category: 'animal', cvc: true },
   { id: 'frog', word: 'frog', initial: 'f', final: 'g', rime: 'og', category: 'animal', cvc: false },
   // -- g --
   { id: 'goat', word: 'goat', initial: 'g', final: 't', rime: null, category: 'animal', cvc: false },
@@ -138,14 +137,12 @@ export const pictureWords: PictureWord[] = [
   // -- s --
   { id: 'sun', word: 'sun', initial: 's', final: 'n', rime: 'un', category: 'nature', cvc: true },
   { id: 'sock', word: 'sock', initial: 's', final: 'k', rime: 'ock', category: 'clothing', cvc: false },
-  { id: 'six', word: 'six', initial: 's', final: 'x', rime: null, category: 'home', cvc: true },
   { id: 'seal', word: 'seal', initial: 's', final: 'l', rime: null, category: 'animal', cvc: false },
   { id: 'saw', word: 'saw', initial: 's', final: null, rime: null, category: 'home', cvc: false },
   { id: 'snake', word: 'snake', initial: 's', final: 'k', rime: 'ake', category: 'animal', cvc: false },
   { id: 'star', word: 'star', initial: 's', final: null, rime: 'ar', category: 'nature', cvc: false },
   // -- t --
   { id: 'top', word: 'top', initial: 't', final: 'p', rime: 'op', category: 'toy', cvc: true },
-  { id: 'ten', word: 'ten', initial: 't', final: 'n', rime: 'en', category: 'home', cvc: true },
   { id: 'tent', word: 'tent', initial: 't', final: 't', rime: null, category: 'home', cvc: false },
   { id: 'tree', word: 'tree', initial: 't', final: null, rime: 'ee', category: 'nature', cvc: false },
   { id: 'tiger', word: 'tiger', initial: 't', final: null, rime: null, category: 'animal', cvc: false },
@@ -154,7 +151,6 @@ export const pictureWords: PictureWord[] = [
   { id: 'tail', word: 'tail', initial: 't', final: 'l', rime: 'ail', category: 'animal', cvc: false },
   // -- u --
   { id: 'umbrella', word: 'umbrella', initial: 'u', final: null, rime: null, category: 'home', cvc: false },
-  { id: 'up', word: 'up', initial: 'u', final: 'p', rime: 'up', category: 'nature', cvc: false },
   // -- v --
   { id: 'van', word: 'van', initial: 'v', final: 'n', rime: 'an', category: 'vehicle', cvc: true },
   { id: 'vest', word: 'vest', initial: 'v', final: 't', rime: null, category: 'clothing', cvc: false },
