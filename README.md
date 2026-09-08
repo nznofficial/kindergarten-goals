@@ -69,6 +69,17 @@ on request; it says "buh". Those clips use the classroom pattern instead —
 letter, keyword, keyword — and all twenty-six should be listened to before
 shipping.
 
+## Offline
+
+The point is an iPad in a car with no signal. A service worker precaches the
+whole build - every bundle, picture and voice clip, 565 files - on first visit,
+so once it has been opened on wifi the game plays identically with the network
+off. `scripts/stamp-sw.ts` builds that list by walking the real `dist/` after
+vite runs, and stamps a build id so a deploy can never be served stale.
+
+Add it to the iPad home screen from Safari's share sheet and it launches
+full-screen with its own icon.
+
 ## Deploying
 
 Pushing to `main` builds and publishes via `.github/workflows/deploy.yml`.
