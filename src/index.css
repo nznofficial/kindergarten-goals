@@ -1,0 +1,95 @@
+/* ---------------------------------------------------------------------------
+   Design tokens. Tablet-first: nothing here assumes a hover state or a keyboard.
+   --------------------------------------------------------------------------- */
+:root {
+  --sky: #d9f0ff;
+  --sky-deep: #7cc4f0;
+  --grass: #cdeec0;
+  --sand: #fdf3dd;
+  --ink: #2f2a26;
+  --ink-soft: #6b6259;
+  --white: #fffdf8;
+
+  /* one hue per goal area, matching its animal host */
+  --area-letters: #4aa96c;
+  --area-letters-soft: #ddf3e2;
+  --area-words: #a061c8;
+  --area-words-soft: #efe2fa;
+  --area-numbers: #3d8ed9;
+  --area-numbers-soft: #dcebfb;
+
+  --star: #ffc93c;
+  --star-empty: #e4dcd0;
+  --correct: #4aa96c;
+  --wrong: #e2795f;
+
+  --radius: 24px;
+  --radius-sm: 14px;
+  --shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  --shadow-lift: 0 10px 24px rgba(47, 42, 38, 0.18);
+
+  /* Fluid type: everything scales with the viewport so one layout serves
+     a phone, an iPad and a classroom TV without breakpoints. */
+  --step-0: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+  --step-1: clamp(1.25rem, 1rem + 1.1vw, 2rem);
+  --step-2: clamp(1.6rem, 1.1rem + 2.2vw, 3rem);
+  --step-3: clamp(2.4rem, 1.2rem + 5vw, 5rem);
+  --step-glyph: clamp(4rem, 2rem + 12vw, 11rem);
+
+  font-family: 'Nunito', 'Baloo 2', 'Comic Sans MS', 'Trebuchet MS', system-ui, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--sky);
+  /* A child dragging on a tracing canvas must not scroll or rubber-band the page. */
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: var(--step-0);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* Every tappable thing clears the 60px target we committed to. */
+button,
+[role='button'] {
+  min-width: 60px;
+  min-height: 60px;
+}
+
+img {
+  max-width: 100%;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
