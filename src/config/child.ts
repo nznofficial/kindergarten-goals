@@ -4,8 +4,8 @@
  * so changing them means re-running `npm run gen:audio` to refresh the spoken name.
  */
 export const child = {
-  firstName: 'Friend',
-  lastName: 'Learner',
+  firstName: 'Elijah',
+  lastName: 'Vazquez',
 } as const
 
 export const childFullName = `${child.firstName} ${child.lastName}`

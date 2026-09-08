@@ -7,7 +7,7 @@
  * calls an API - GitHub Pages has no server to hide a key in.
  *
  * Flags:
- *   --only <substring>   regenerate just the keys that match
+ *   --only <a,b,c>       regenerate just the keys matching any of these substrings
  *   --force              redo assets that already exist
  *   --anchor             (re)generate only the style anchor, for approval
  */
@@ -15,7 +15,7 @@ import { createReadStream, existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import OpenAI from 'openai'
+import OpenAI, { toFile } from 'openai'
 import sharp from 'sharp'
 import { anchorKey, imageAssets, type ImageAsset } from './assets'
 
@@ -24,7 +24,7 @@ const outDir = join(root, 'public/assets/images')
 const rawDir = join(root, '.asset-cache/images')
 
 const args = process.argv.slice(2)
-const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : null
+const only = args.includes('--only') ? args[args.indexOf('--only') + 1].split(',') : null
 const force = args.includes('--force')
 const anchorOnly = args.includes('--anchor')
 
@@ -61,10 +61,13 @@ async function generate(asset: ImageAsset, anchor: string | null): Promise<Buffe
   // Everything after the anchor is generated as an edit against it, which is
   // what keeps 150 separate calls looking like one illustrator drew them.
   if (anchor && existsSync(anchor)) {
+    // toFile attaches a filename and mimetype; a bare stream is rejected as
+    // application/octet-stream.
+    const reference = await toFile(createReadStream(anchor), 'anchor.png', { type: 'image/png' })
     const result = await client.images.edit({
       model: 'gpt-image-1',
-      image: [createReadStream(anchor) as never],
-      prompt: `${asset.prompt}\n\nMatch the art style, palette, line weight and character design of the reference image exactly. Draw the described subject only - do not copy the reference subject.`,
+      image: [reference],
+      prompt: `${asset.prompt}\n\nMatch the art style, line weight, shading and finish of the reference image exactly. Draw the described subject only - do not copy the reference subject. Use the subject's own natural real-world colors; do not tint it toward the reference image's orange palette.`,
       size: '1024x1024',
       quality: 'medium',
       background: 'transparent',
@@ -100,7 +103,7 @@ async function main() {
 
   const queue = all.filter((a) => {
     if (a.isAnchor) return false
-    if (only && !a.key.includes(only)) return false
+    if (only && !only.some((frag) => a.key.includes(frag))) return false
     return force || !existsSync(finalPath(a.key))
   })
 
@@ -108,8 +111,8 @@ async function main() {
 
   let done = 0
   let failed = 0
-  // Modest concurrency: fast enough to matter, gentle enough not to trip limits.
-  const workers = Array.from({ length: 4 }, async () => {
+  // Latency-bound: each call takes ~30s, so width is what makes the run finish.
+  const workers = Array.from({ length: 10 }, async () => {
     for (;;) {
       const asset = queue.shift()
       if (!asset) return

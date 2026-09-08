@@ -7,7 +7,7 @@
  * which is then committed. The deployed game never calls an API.
  *
  * Flags:
- *   --only <substring>   regenerate just the keys that match
+ *   --only <a,b,c>       regenerate just the keys matching any of these substrings
  *   --force              redo clips that already exist
  *   --voice <name>       try a different narrator
  */
@@ -22,7 +22,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = join(root, 'public/assets/audio')
 
 const args = process.argv.slice(2)
-const only = args.includes('--only') ? args[args.indexOf('--only') + 1] : null
+const only = args.includes('--only') ? args[args.indexOf('--only') + 1].split(',') : null
 const force = args.includes('--force')
 const voice = args.includes('--voice') ? args[args.indexOf('--voice') + 1] : 'coral'
 
@@ -38,7 +38,7 @@ const filePath = (k: string) => join(outDir, `${k}.mp3`)
 async function main() {
   const all = audioAssets()
   const queue = all.filter((a) => {
-    if (only && !a.key.includes(only)) return false
+    if (only && !only.some((frag) => a.key.includes(frag))) return false
     return force || !existsSync(filePath(a.key))
   })
 
